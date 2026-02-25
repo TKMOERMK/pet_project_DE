@@ -7,15 +7,15 @@ from airflow.models import Variable
 from airflow.operators.empty import EmptyOperator
 from airflow.operators.python import PythonOperator
 
-# Конфигурация DAG
+
 OWNER = "ermik"
 DAG_ID = "raw_from_api_to_s3"
 
-# Используемые таблицы в DAG
+
 LAYER = "raw"
 SOURCE = "earthquake"
 
-# S3
+
 ACCESS_KEY = Variable.get("access_key")
 SECRET_KEY = Variable.get("secret_key")
 
@@ -46,7 +46,7 @@ def get_and_transfer_api_data_to_s3(**context):
     """"""
 
     start_date, end_date = get_dates(**context)
-    logging.info(f"💻 Start load for dates: {start_date}/{end_date}")
+    logging.info(f" Start load for dates: {start_date}/{end_date}")
     con = duckdb.connect()
 
     con.sql(
