@@ -4,7 +4,6 @@ from airflow.operators.empty import EmptyOperator
 from airflow.providers.common.sql.operators.sql import SQLExecuteQueryOperator
 from airflow.sensors.external_task import ExternalTaskSensor
 
-# Конфигурация DAG
 OWNER = "ermik"
 DAG_ID = "fct_tmp_day_weather"
 
