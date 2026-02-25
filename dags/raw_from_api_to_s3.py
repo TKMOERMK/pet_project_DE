@@ -48,9 +48,7 @@ def get_and_transfer_api_data_to_s3(**context):
     import duckdb
 
     start_date, end_date = get_dates(**context)
-    logging.info(f"💻 Start load WEATHER for dates: {start_date}/{end_date}")
-
-    # --- ВОТ ЭТОТ КУСОК ЗАМЕНЯЕМ ---
+    logging.info(f" Start load WEATHER for dates: {start_date}/{end_date}")
     base_url = "https://archive-api.open-meteo.com/v1/archive"
     params = {
         "latitude": 55.75,
@@ -60,25 +58,18 @@ def get_and_transfer_api_data_to_s3(**context):
         "hourly": "temperature_2m,rain",
         "format": "json"
     }
-
     try:
-        # requests сам добавит к base_url все параметры из словаря params
         response = requests.get(base_url, params=params, timeout=30)
         response.raise_for_status()
         data = response.json()
         
-        # Берем только почасовые данные
         df = pd.DataFrame(data['hourly'])
     except Exception as e:
         logging.error(f"❌ Failed to fetch Weather API: {e}")
         raise
-    # --- КОНЕЦ ЗАМЕНЫ ---
 
     con = duckdb.connect()
-    # Загружаем твой локальный плагин
     con.execute("LOAD '/opt/airflow/dags/httpfs.duckdb_extension';")
-
-    # 2. Настройка MinIO и загрузка
     con.sql(
         f"""
         SET s3_url_style = 'path';
