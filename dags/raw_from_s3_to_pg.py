@@ -52,7 +52,7 @@ def get_and_transfer_raw_data_to_ods_pg(**context):
     """"""
 
     start_date, end_date = get_dates(**context)
-    logging.info(f"💻 Start load for dates: {start_date}/{end_date}")
+    logging.info(f" Start load for dates: {start_date}/{end_date}")
     con = duckdb.connect()
     con.execute("LOAD '/opt/airflow/dags/httpfs.duckdb_extension';")
     con.execute("LOAD '/opt/airflow/dags/postgres_scanner.duckdb_extension';")
@@ -78,8 +78,7 @@ def get_and_transfer_raw_data_to_ods_pg(**context):
         ATTACH '' AS dwh_postgres_db (TYPE postgres, SECRET dwh_postgres);
         """
     )
-
-    # Ветвление: если источник weather — загружаем в ods.fct_weather только нужные колонки
+    
     if SOURCE == "weather":
         con.sql(
             f"""
@@ -93,7 +92,6 @@ def get_and_transfer_raw_data_to_ods_pg(**context):
         )
         logging.info("Inserted weather data into ods.fct_weather for %s", start_date)
     else:
-        # Оригинальная логика для earthquake (без изменений)
         con.sql(
             f"""
             INSERT INTO dwh_postgres_db.{SCHEMA}.{TARGET_TABLE}
